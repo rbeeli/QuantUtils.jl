@@ -12,7 +12,7 @@ include("imputation.jl")
 export ffill, ffill!, bfill, bfill!
 
 
-include("partition.jl")
+include("partitioning.jl")
 export split_parts, split_parts_to_indices
 
 

@@ -6,7 +6,7 @@ using QuantUtils
 #   Pkg.test("QuantUtils", test_args=["combinatorics.jl"])
 #   Pkg.test("QuantUtils", test_args=["conversion.jl"])
 #   Pkg.test("QuantUtils", test_args=["imputation.jl"])
-#   Pkg.test("QuantUtils", test_args=["partition.jl"])
+#   Pkg.test("QuantUtils", test_args=["partitioning.jl"])
 #   Pkg.test("QuantUtils", test_args=["rolling.jl"])
 
 requested_tests = ARGS
@@ -15,7 +15,7 @@ if isempty(requested_tests)
     include("combinatorics.jl")
     include("conversion.jl")
     include("imputation.jl")
-    include("partition.jl")
+    include("partitioning.jl")
     include("rolling.jl")
 else
     println('-' ^ 60)
