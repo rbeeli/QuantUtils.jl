@@ -15,6 +15,20 @@ end
 end
 
 
+@testset "nan_to_one: scalars" begin
+    @test nan_to_one(NaN) === 1.0
+    @test nan_to_one(5.0) === 5.0
+    @test nan_to_one(3) === 3
+end
+
+
+@testset "nan_to_one: broadcasting" begin
+    @test all(nan_to_one.([NaN, 5.0, 3]) .== [1.0, 5.0, 3.0])
+    @test all(nan_to_one.([NaN, 5.0, 3.0]) .== [1.0, 5.0, 3.0])
+    @test all(nan_to_one.([NaN, 5, 3]) .== [1.0, 5.0, 3.0])
+end
+
+
 @testset "nan_to_x: scalars" begin
     @test nan_to_x(NaN, 10) === 10
     @test nan_to_x(5.0, 10) === 5.0

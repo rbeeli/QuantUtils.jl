@@ -2,7 +2,7 @@ using DataFrames
 
 
 """
-    ffill!(df::AbstractDataFrame, where=isnan; cols=names(df), ignore_cols=nothing)
+    ffill!(df::AbstractDataFrame, where=isnan; cols=names(df), ignore_cols=nothing, fill=(curr, prev) -> prev)
 
 Forward-fill missing values in a dataframe.
 The operation is performed in-place.
@@ -21,8 +21,8 @@ function ffill!(
     where=x -> ismissing(x) || isnan(x),
     cols=names(df),
     ignore_cols=nothing,
-    fill=(curr, prev) -> prev
-)
+    fill::F=(curr, prev) -> prev
+) where {F<:Function}
     !isnothing(ignore_cols) && (ignore_cols = Set(String(x) for x in ignore_cols))
     for col in cols
         !isnothing(ignore_cols) && (String(col) in ignore_cols) && continue
@@ -38,7 +38,7 @@ end
 
 
 """
-    ffill(df::AbstractDataFrame, where=isnan; cols=names(df), ignore_cols=nothing)
+    ffill(df::AbstractDataFrame, where=isnan; cols=names(df), ignore_cols=nothing, fill=(curr, prev) -> prev)
 
 Forward-fill missing values in a dataframe.
 The operation is performed on a copy of the dataframe.
@@ -57,8 +57,8 @@ function ffill(
     where=x -> ismissing(x) || isnan(x),
     cols=names(df),
     ignore_cols=nothing,
-    fill=(curr, prev) -> prev
-)
+    fill::F=(curr, prev) -> prev
+) where {F<:Function}
     ffill!(
         copy(df);
         where=where,
@@ -70,7 +70,7 @@ end
 
 
 """
-    bfill!(df::AbstractDataFrame, where=isnan; cols=names(df), ignore_cols=nothing)
+    bfill!(df::AbstractDataFrame, where=isnan; cols=names(df), ignore_cols=nothing, fill=(curr, prev) -> prev)
 
 Backward-fill missing values in a dataframe.
 The operation is performed in-place.
@@ -90,8 +90,8 @@ function bfill!(
     where=x -> ismissing(x) || isnan(x),
     cols=names(df),
     ignore_cols=nothing,
-    fill=(curr, prev) -> prev
-)
+    fill::F=(curr, prev) -> prev
+) where {F<:Function}
     !isnothing(ignore_cols) && (ignore_cols = Set(String(x) for x in ignore_cols))
     for col in cols
         !isnothing(ignore_cols) && (String(col) in ignore_cols) && continue
@@ -107,7 +107,7 @@ end
 
 
 """
-    bfill(df::AbstractDataFrame, where=isnan; cols=names(df), ignore_cols=nothing)
+    bfill(df::AbstractDataFrame, where=isnan; cols=names(df), ignore_cols=nothing, fill=(curr, prev) -> prev)
 
 Backward-fill missing values in a dataframe.
 The operation is performed on a copy of the dataframe.
@@ -126,8 +126,8 @@ function bfill(
     where=x -> ismissing(x) || isnan(x),
     cols=names(df),
     ignore_cols=nothing,
-    fill=(curr, prev) -> prev
-)
+    fill::F=(curr, prev) -> prev
+) where {F<:Function}
     bfill!(
         copy(df);
         where=where,

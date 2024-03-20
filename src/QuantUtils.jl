@@ -5,7 +5,7 @@ export params_combinations
 
 
 include("conversion.jl")
-export nan_to_x, nan_to_zero
+export nan_to_x, nan_to_zero, nan_to_one
 
 
 include("imputation.jl")

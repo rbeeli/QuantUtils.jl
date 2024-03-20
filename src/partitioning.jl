@@ -76,7 +76,7 @@ end
     split_parts_to_indices(total_length, parts)
 
 Split a sequence of length `total_length` into multiple parts.
-Parts are fractions which must sum to 1.
+The passed `parts` parameter must be non-negative fractions which must sum to 1.
 
 Parameters
 ----------
