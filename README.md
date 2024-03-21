@@ -1,5 +1,7 @@
 # QuantUtils.jl
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Utility functions commonly used in Quantitative Finance and Machine Learning.
 The functions make use of multiple dispatch and aim to be type stable for best performance.
 
