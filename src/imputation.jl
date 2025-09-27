@@ -25,7 +25,7 @@ function ffill!(
     predicate=x -> ismissing(x) || isnan(x),
     skip_cols=nothing,
 )
-    skip_set = skip_cols === nothing ? nothing : Set(skip_cols)
+    skip_set = isnothing(skip_cols) ? nothing : Set(skip_cols)
     for col in names(df)
         skip_set !== nothing && (col in skip_set) && continue
         vals = df[!, col]
@@ -167,7 +167,7 @@ function bfill!(
     predicate=x -> ismissing(x) || isnan(x),
     skip_cols=nothing,
 )
-    skip_set = skip_cols === nothing ? nothing : Set(skip_cols)
+    skip_set = isnothing(skip_cols) ? nothing : Set(skip_cols)
     for col in names(df)
         skip_set !== nothing && (col in skip_set) && continue
         vals = df[!, col]

@@ -1,12 +1,20 @@
 name = "QuantUtils"
 uuid = "9e3e799b-9571-411b-b323-83b25a8554ec"
 authors = ["Rino Beeli <40661605+rbeeli@users.noreply.github.com>"]
-version = "0.2.1"
+version = "0.3.0"
 
 [deps]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [compat]
+DataStructures = "0.19"
+Dates = "1"
+Random = "1"
+Statistics = "1"
 TestItemRunner = "1"
 
 [extras]
