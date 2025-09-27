@@ -1,6 +1,5 @@
 using DataFrames
 
-
 """
     ffill!(df::AbstractDataFrame, where=isnan; cols=names(df), ignore_cols=nothing, fill=(curr, prev) -> prev)
 
@@ -21,21 +20,20 @@ function ffill!(
     where=x -> ismissing(x) || isnan(x),
     cols=names(df),
     ignore_cols=nothing,
-    fill::F=(curr, prev) -> prev
+    fill::F=(curr, prev) -> prev,
 ) where {F<:Function}
     !isnothing(ignore_cols) && (ignore_cols = Set(String(x) for x in ignore_cols))
     for col in cols
         !isnothing(ignore_cols) && (String(col) in ignore_cols) && continue
         vals = df[!, col]
-        @inbounds for i in firstindex(vals)+1:lastindex(vals)
+        @inbounds for i in (firstindex(vals) + 1):lastindex(vals)
             if where(vals[i])
-                vals[i] = fill(vals[i], vals[i-1])
+                vals[i] = fill(vals[i], vals[i - 1])
             end
         end
     end
     df
 end
-
 
 """
     ffill(df::AbstractDataFrame, where=isnan; cols=names(df), ignore_cols=nothing, fill=(curr, prev) -> prev)
@@ -57,17 +55,10 @@ function ffill(
     where=x -> ismissing(x) || isnan(x),
     cols=names(df),
     ignore_cols=nothing,
-    fill::F=(curr, prev) -> prev
+    fill::F=(curr, prev) -> prev,
 ) where {F<:Function}
-    ffill!(
-        copy(df);
-        where=where,
-        cols=cols,
-        ignore_cols=ignore_cols,
-        fill=fill
-    )
+    ffill!(copy(df); where=where, cols=cols, ignore_cols=ignore_cols, fill=fill)
 end
-
 
 """
     bfill!(df::AbstractDataFrame, where=isnan; cols=names(df), ignore_cols=nothing, fill=(curr, prev) -> prev)
@@ -85,26 +76,24 @@ Parameters
 - `fill`: Function to get fill value. Default is to use preceding value.
 """
 function bfill!(
-    df::AbstractDataFrame
-    ;
+    df::AbstractDataFrame;
     where=x -> ismissing(x) || isnan(x),
     cols=names(df),
     ignore_cols=nothing,
-    fill::F=(curr, prev) -> prev
+    fill::F=(curr, prev) -> prev,
 ) where {F<:Function}
     !isnothing(ignore_cols) && (ignore_cols = Set(String(x) for x in ignore_cols))
     for col in cols
         !isnothing(ignore_cols) && (String(col) in ignore_cols) && continue
         vals = df[!, col]
-        @inbounds for i in lastindex(vals)-1:-1:firstindex(vals)
+        @inbounds for i in (lastindex(vals) - 1):-1:firstindex(vals)
             if where(vals[i])
-                vals[i] = fill(vals[i], vals[i+1])
+                vals[i] = fill(vals[i], vals[i + 1])
             end
         end
     end
     df
 end
-
 
 """
     bfill(df::AbstractDataFrame, where=isnan; cols=names(df), ignore_cols=nothing, fill=(curr, prev) -> prev)
@@ -126,13 +115,9 @@ function bfill(
     where=x -> ismissing(x) || isnan(x),
     cols=names(df),
     ignore_cols=nothing,
-    fill::F=(curr, prev) -> prev
+    fill::F=(curr, prev) -> prev,
 ) where {F<:Function}
-    bfill!(
-        copy(df);
-        where=where,
-        cols=cols,
-        ignore_cols=ignore_cols,
-        fill=fill
-    )
+    bfill!(copy(df); where=where, cols=cols, ignore_cols=ignore_cols, fill=fill)
 end
+
+export ffill, ffill!, bfill, bfill!

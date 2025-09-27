@@ -1,11 +1,10 @@
-using Test
+using TestItemRunner
 
+@testitem "params_combinations: type-stable keys/values" begin
+    using Test
+    using QuantUtils: params_combinations
 
-@testset "params_combinations: type-stable keys/values" begin
-    a_fixed = Dict(
-        :wnd => [1.0,2.0,3.0],
-        :mode => [1.0],
-        :coef => [0.1, 0.5, 1.0])
+    a_fixed = Dict(:wnd => [1.0, 2.0, 3.0], :mode => [1.0], :coef => [0.1, 0.5, 1.0])
     res = params_combinations(a_fixed)
 
     @test length(res) == 9
@@ -17,12 +16,11 @@ using Test
     end
 end
 
+@testitem "params_combinations: mixed types keys/values" begin
+    using Test
+    using QuantUtils: params_combinations
 
-@testset "params_combinations: mixed types keys/values" begin
-    a_mixed = Dict(
-        "wnd" => [1,2,3],
-        :mode => ["A"],
-        "coef" => [0.1, 0.5, 1.0])
+    a_mixed = Dict("wnd" => [1, 2, 3], :mode => ["A"], "coef" => [0.1, 0.5, 1.0])
     res = params_combinations(a_mixed)
 
     @test length(res) == 9
@@ -34,11 +32,11 @@ end
     end
 end
 
-@testset "params_combinations: filtered" begin
-    params = Dict{Any, Vector{Any}}(
-        :wnd => [1,2],
-        :mode => ["A", "B"],
-        :coef => [0.1, 0.5])
+@testitem "params_combinations: filtered" begin
+    using Test
+    using QuantUtils: params_combinations
+
+    params = Dict{Any,Vector{Any}}(:wnd => [1, 2], :mode => ["A", "B"], :coef => [0.1, 0.5])
     res = params_combinations(params; filter=x -> x[:mode] != "A" && x[:wnd] > 1)
 
     @test length(res) == 2

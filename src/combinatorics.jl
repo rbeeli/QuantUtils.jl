@@ -45,7 +45,7 @@ julia> params_combinations(params; filter=filter)
 function params_combinations(
     params;      # ::Dict{Any, Vector{Any}};
     filter::TF=x -> true,
-    shuffle=false
+    shuffle=false,
 ) where {TF<:Function}
     # recursive implementation
     result = Vector{Dict{keytype(params),eltype(valtype(params))}}()
@@ -57,12 +57,12 @@ function params_combinations(
 end
 
 function params_combinations_internal(
-    params,
+    params, #
     filter::TF,
     result,
     key_pos,
     tmp_keys,
-    tmp_values
+    tmp_values,
 ) where {TF<:Function}
     if key_pos <= length(params)
         key_params = params[tmp_keys[key_pos]]
@@ -82,5 +82,7 @@ function params_combinations_internal(
             push!(result, new_parameterset)
         end
     end
-    return # if-block returns a value otherwise
+    return nothing # if-block returns a value otherwise
 end
+
+export params_combinations

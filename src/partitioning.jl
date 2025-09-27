@@ -16,14 +16,13 @@ function split_parts(mat::T, parts; axis=1) where {T<:AbstractMatrix}
 
     # split matrix into parts
     if axis == 1
-        tuple([mat[splits[i]+1:splits[i+1], :] for i in 1:length(splits)-1]...)
+        tuple([mat[(splits[i] + 1):splits[i + 1], :] for i in 1:(length(splits) - 1)]...)
     elseif axis == 2
-        tuple([mat[:, splits[i]+1:splits[i+1]] for i in 1:length(splits)-1]...)
+        tuple([mat[:, (splits[i] + 1):splits[i + 1]] for i in 1:(length(splits) - 1)]...)
     else
         throw(ArgumentError("Invalid axis parameter: $axis"))
     end
 end
-
 
 """
     split_parts(vec::AbstractVector, parts; axis=1)
@@ -41,9 +40,8 @@ Returns a tuple of split vectors.
 function split_parts(vec::T, parts; axis=1) where {T<:AbstractVector}
     axis == 1 || error("Vectors can only be split along the first axis (axis=1)")
     splits = split_parts_to_indices(size(vec, axis), parts)
-    tuple([vec[splits[i]+1:splits[i+1]] for i in 1:length(splits)-1]...)
+    tuple([vec[(splits[i] + 1):splits[i + 1]] for i in 1:(length(splits) - 1)]...)
 end
-
 
 """
     split_parts(df::AbstractDataFrame, parts; axis=1)
@@ -63,14 +61,13 @@ function split_parts(df::T, parts; axis=1) where {T<:AbstractDataFrame}
 
     # split dataframe into parts
     if axis == 1
-        tuple([df[splits[i]+1:splits[i+1], :] for i in 1:length(splits)-1]...)
+        tuple([df[(splits[i] + 1):splits[i + 1], :] for i in 1:(length(splits) - 1)]...)
     elseif axis == 2
-        tuple([df[:, splits[i]+1:splits[i+1]] for i in 1:length(splits)-1]...)
+        tuple([df[:, (splits[i] + 1):splits[i + 1]] for i in 1:(length(splits) - 1)]...)
     else
         throw(ArgumentError("Invalid axis parameter: $axis"))
     end
 end
-
 
 """
     split_parts_to_indices(total_length, parts)
@@ -95,3 +92,5 @@ function split_parts_to_indices(total_length, parts)
 
     splits
 end
+
+export split_parts, split_parts_to_indices

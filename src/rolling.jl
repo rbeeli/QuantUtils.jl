@@ -3,16 +3,14 @@
 # @inline fn_return_type(fn) = Base.return_types(fn)[max(1, end-1)]
 # @inline fn_return_type(fn, typs) = Base.return_types(fn, typs)[max(1, end-1)]
 
-
 function rolling_apply(
     vec::V,
     window::Int,
-    fn::F
-    ;
+    fn::F;
     step::Int=1,
     item_type=eltype(vec),
     running::Bool=false,
-    parallel::Bool=false
+    parallel::Bool=false,
 ) where {V<:AbstractVector,F<:Function}
     n = length(vec)
 
@@ -36,14 +34,15 @@ function rolling_apply(
         # get window data as view
         wnd_range = max(1, i - window + 1):i
         wnd_vals = @view vec[wnd_range]
-        
+
         # apply window function
         output[ix] = fn(wnd_vals; i=i, r=wnd_range)
     end
 
     if parallel
         # multi-threading
-        @inbounds Threads.@threads for (ix, i) in collect(enumerate(start_index:step:lastindex(vec)))
+        @inbounds Threads.@threads for (ix, i) in
+                                       collect(enumerate(start_index:step:lastindex(vec)))
             loop_body(ix, i)
         end
     else
@@ -55,19 +54,15 @@ function rolling_apply(
     output
 end
 
-
-
-
 function rolling_apply(
     mat::M,
     window::Int,
-    fn::F
-    ;
+    fn::F;
     dim::Int=1, # dimension to apply function along (1=rows, 2=columns)
     step::Int=1,
     item_type=eltype(mat),
     running::Bool=false,
-    parallel::Bool=false
+    parallel::Bool=false,
 ) where {M<:AbstractMatrix,F<:Function}
     n = size(mat, dim)
 
@@ -95,7 +90,7 @@ function rolling_apply(
         # get window data as view
         wnd_range = max(1, i - window + 1):i
         wnd_vals = selectdim(mat, dim, wnd_range)
-        
+
         # apply window function
         fn_out = fn(wnd_vals; i=i, r=wnd_range)
 
@@ -108,7 +103,8 @@ function rolling_apply(
 
     if parallel
         # multi-threading
-        @inbounds Threads.@threads for (ix, i) in collect(enumerate(start_index:step:lastindex(mat, dim)))
+        @inbounds Threads.@threads for (ix, i) in
+                                       collect(enumerate(start_index:step:lastindex(mat, dim)))
             loop_body(ix, i)
         end
     else
@@ -119,8 +115,6 @@ function rolling_apply(
 
     output
 end
-
-
 
 # function rolling_apply_slices(
 #     mat::V,
@@ -161,7 +155,6 @@ end
 #     outputs
 # end
 
-
 # function rolling_apply(df::AbstractDataFrame; look_back::Int, fn::F, step::Int=1, eltype::Type=Any) where {F<:Function}
 #     n_source = nrow(df)
 #     n_out = max(0, ceil(Int, (n_source - look_back + 1) / step))
@@ -174,10 +167,6 @@ end
 #     end
 #     outputs
 # end
-
-
-
-
 
 # function rolling_look_around_apply(df::AbstractDataFrame, look_back::Int, look_ahead::Int, fn::Function; step::Int=1)
 #     outputs = []
@@ -204,3 +193,5 @@ end
 #     end
 #     outputs
 # end
+
+export rolling_apply
