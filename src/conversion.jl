@@ -29,4 +29,20 @@ NaN values are left unchanged.
 """
 @inline inf_to_nan(x) = isinf(x) ? NaN : x
 
-export nan_to_x, nan_to_zero, nan_to_one, inf_to_nan
+"""
+    replace_missing_with_nans!(::Type{T}, df::AbstractDataFrame) where {T<:AbstractFloat}
+
+Mutate `df` in-place by replacing `missing` values in columns of type
+`Union{Missing, T}` with `NaN` of type `T`.
+"""
+function replace_missing_with_nans!(::Type{T}, df::AbstractDataFrame) where {T<:AbstractFloat}
+    # Missing => NaN
+    for col in names(df)
+        if eltype(df[!, col]) <: Union{Missing,AbstractFloat}
+            df[!, col] = T.(coalesce.(df[!, col], NaN)) # Missing => NaN
+        end
+    end
+    df
+end
+
+export nan_to_x, nan_to_zero, nan_to_one, inf_to_nan, replace_missing_with_nans!
