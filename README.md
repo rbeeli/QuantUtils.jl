@@ -21,15 +21,20 @@ params_combinations(params; filter, shuffle)
 nan_to_zero(x)
 nan_to_one(x)
 nan_to_x(x, nan_value)
+inf_to_nan(x)
 ```
 
 ### Imputation
 
 ```julia
-ffill(df::AbstractDataFrame, where=isnan; cols=names(df), ignore_cols=nothing, fill=(curr, prev) -> prev)
-ffill!(df::AbstractDataFrame, where=isnan; cols=names(df), ignore_cols=nothing, fill=(curr, prev) -> prev)
-bfill(df::AbstractDataFrame, where=isnan; cols=names(df), ignore_cols=nothing, fill=(curr, prev) -> prev)
-bfill!(df::AbstractDataFrame, where=isnan; cols=names(df), ignore_cols=nothing, fill=(curr, prev) -> prev)
+ffill(df::AbstractDataFrame; predicate=x -> ismissing(x) || isnan(x), skip_cols=nothing)
+ffill!(df::AbstractDataFrame; predicate=x -> ismissing(x) || isnan(x), skip_cols=nothing)
+bfill(df::AbstractDataFrame; predicate=x -> ismissing(x) || isnan(x), skip_cols=nothing)
+bfill!(df::AbstractDataFrame; predicate=x -> ismissing(x) || isnan(x), skip_cols=nothing)
+ffill(vec::AbstractVector, limit::Int=typemax(Int); predicate=x -> ismissing(x) || isnan(x))
+ffill!(vec::AbstractVector, limit::Int=typemax(Int); predicate=x -> ismissing(x) || isnan(x))
+bfill(vec::AbstractVector, limit::Int=typemax(Int); predicate=x -> ismissing(x) || isnan(x))
+bfill!(vec::AbstractVector, limit::Int=typemax(Int); predicate=x -> ismissing(x) || isnan(x))
 ```
 
 ### Partitioning

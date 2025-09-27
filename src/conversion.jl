@@ -29,4 +29,4 @@ NaN values are left unchanged.
 """
 @inline inf_to_nan(x) = isinf(x) ? NaN : x
 
-export nan_to_x, nan_to_zero, nan_to_one
+export nan_to_x, nan_to_zero, nan_to_one, inf_to_nan

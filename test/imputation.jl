@@ -16,7 +16,7 @@ using Test
     end
 end
 
-@testitem "imputation: ffill" setup = [SharedImputation] begin
+@testitem "ffill" setup = [SharedImputation] begin
     using Test
     using DataFrames
     using QuantUtils: ffill
@@ -25,17 +25,17 @@ end
 
     # Basic functionality test
     test_array(ffill(df).A, [1, 1, 3, 3])
-    # Test with specific columns
-    test_array(ffill(df; cols=[:B]).B, [missing, 2, 2, 4])
-    test_array(ffill(df; cols=[:B]).A, df.A)
-    # Test with ignore_cols
-    test_array(ffill(df; ignore_cols=[:B]).A, [1, 1, 3, 3])
-    test_array(ffill(df; ignore_cols=[:B]).B, df.B)
-    # Custom where function
-    test_array(ffill(df; where=ismissing).A, [1, NaN, 3, 3])
+    # Test with skip_cols to target specific columns
+    test_array(ffill(df; skip_cols=["A"]).B, [missing, 2, 2, 4])
+    test_array(ffill(df; skip_cols=["A"]).A, df.A)
+    # Test with skip_cols
+    test_array(ffill(df; skip_cols=["B"]).A, [1, 1, 3, 3])
+    test_array(ffill(df; skip_cols=["B"]).B, df.B)
+    # Custom predicate function
+    test_array(ffill(df; predicate=ismissing).A, [1, NaN, 3, 3])
 end
 
-@testitem "imputation: ffill!" setup = [SharedImputation] begin
+@testitem "ffill!" setup = [SharedImputation] begin
     using Test
     using DataFrames
     using QuantUtils: ffill!
@@ -44,17 +44,45 @@ end
 
     # Basic functionality test
     test_array(ffill!(copy(df)).A, [1, 1, 3, 3])
-    # Test with specific columns
-    test_array(ffill!(copy(df); cols=[:B]).B, [missing, 2, 2, 4])
-    test_array(ffill!(copy(df); cols=[:B]).A, df.A)
-    # Test with ignore_cols
-    test_array(ffill!(copy(df); ignore_cols=[:B]).A, [1, 1, 3, 3])
-    test_array(ffill!(copy(df); ignore_cols=[:B]).B, df.B)
-    # Custom where function
-    test_array(ffill!(copy(df); where=ismissing).A, [1, NaN, 3, 3])
+    # Test with skip_cols to target specific columns
+    test_array(ffill!(copy(df); skip_cols=["A"]).B, [missing, 2, 2, 4])
+    test_array(ffill!(copy(df); skip_cols=["A"]).A, df.A)
+    # Test with skip_cols
+    test_array(ffill!(copy(df); skip_cols=["B"]).A, [1, 1, 3, 3])
+    test_array(ffill!(copy(df); skip_cols=["B"]).B, df.B)
+    # Custom predicate function
+    test_array(ffill!(copy(df); predicate=ismissing).A, [1, NaN, 3, 3])
 end
 
-@testitem "imputation: bfill" setup = [SharedImputation] begin
+@testitem "ffill vector" setup = [SharedImputation] begin
+    using Test
+    using QuantUtils: ffill, ffill!
+
+    vec = [1, NaN, 3, missing]
+    test_array(ffill(vec), [1, 1, 3, 3])
+    test_array(vec, [1, NaN, 3, missing])
+
+    vec_with_limit = [1, missing, missing, 4]
+    test_array(ffill(vec_with_limit, 1), [1, 1, missing, 4])
+
+    vec_predicate = [1.0, NaN, NaN, 4.0]
+    test_array(ffill(vec_predicate; predicate=isnan), [1.0, 1.0, 1.0, 4.0])
+    test_array(vec_predicate, [1.0, NaN, NaN, 4.0])
+
+    vec_inplace = [1, missing, missing, 5]
+    ffill!(vec_inplace, 2)
+    test_array(vec_inplace, [1, 1, 1, 5])
+
+    vec_inplace_predicate = [1.0, NaN, NaN, 5.0]
+    ffill!(vec_inplace_predicate; predicate=isnan)
+    test_array(vec_inplace_predicate, [1.0, 1.0, 1.0, 5.0])
+
+    vec_noop = [1, missing, 3]
+    ffill!(vec_noop, 0)
+    test_array(vec_noop, [1, missing, 3])
+end
+
+@testitem "bfill" setup = [SharedImputation] begin
     using Test
     using DataFrames
     using QuantUtils: bfill
@@ -63,17 +91,17 @@ end
 
     # Basic functionality test
     test_array(bfill(df).A, [1, 3, 3, missing])
-    # Test with specific columns
-    test_array(bfill(df; cols=[:B]).B, [2, 2, 4, 4])
-    test_array(bfill(df; cols=[:B]).A, df.A)
-    # Test with ignore_cols
-    test_array(bfill(df; ignore_cols=[:B]).A, [1, 3, 3, missing])
-    test_array(bfill(df; ignore_cols=[:B]).B, df.B)
-    # Custom where function
-    test_array(bfill(df; where=ismissing).A, [1, NaN, 3, missing])
+    # Test with skip_cols to target specific columns
+    test_array(bfill(df; skip_cols=["A"]).B, [2, 2, 4, 4])
+    test_array(bfill(df; skip_cols=["A"]).A, df.A)
+    # Test with skip_cols
+    test_array(bfill(df; skip_cols=["B"]).A, [1, 3, 3, missing])
+    test_array(bfill(df; skip_cols=["B"]).B, df.B)
+    # Custom predicate function
+    test_array(bfill(df; predicate=ismissing).A, [1, NaN, 3, missing])
 end
 
-@testitem "imputation: bfill!" setup = [SharedImputation] begin
+@testitem "bfill!" setup = [SharedImputation] begin
     using Test
     using DataFrames
     using QuantUtils: bfill!
@@ -82,12 +110,40 @@ end
 
     # Basic functionality test
     test_array(bfill!(copy(df)).A, [1, 3, 3, missing])
-    # Test with specific columns
-    test_array(bfill!(copy(df); cols=[:B]).B, [2, 2, 4, 4])
-    test_array(bfill!(copy(df); cols=[:B]).A, df.A)
-    # Test with ignore_cols
-    test_array(bfill!(copy(df); ignore_cols=[:B]).A, [1, 3, 3, missing])
-    test_array(bfill!(copy(df); ignore_cols=[:B]).B, df.B)
-    # Custom where function
-    test_array(bfill!(copy(df); where=ismissing).A, [1, NaN, 3, missing])
+    # Test with skip_cols to target specific columns
+    test_array(bfill!(copy(df); skip_cols=["A"]).B, [2, 2, 4, 4])
+    test_array(bfill!(copy(df); skip_cols=["A"]).A, df.A)
+    # Test with skip_cols
+    test_array(bfill!(copy(df); skip_cols=["B"]).A, [1, 3, 3, missing])
+    test_array(bfill!(copy(df); skip_cols=["B"]).B, df.B)
+    # Custom predicate function
+    test_array(bfill!(copy(df); predicate=ismissing).A, [1, NaN, 3, missing])
+end
+
+@testitem "bfill vector" setup = [SharedImputation] begin
+    using Test
+    using QuantUtils: bfill, bfill!
+
+    vec = [missing, 2, missing, 4]
+    test_array(bfill(vec), [2, 2, 4, 4])
+    test_array(vec, [missing, 2, missing, 4])
+
+    vec_with_limit = [missing, missing, 3]
+    test_array(bfill(vec_with_limit, 1), [missing, 3, 3])
+
+    vec_predicate = [0.0, NaN, NaN, 5.0]
+    test_array(bfill(vec_predicate; predicate=isnan), [0.0, 5.0, 5.0, 5.0])
+    test_array(vec_predicate, [0.0, NaN, NaN, 5.0])
+
+    vec_inplace = [missing, missing, missing, 5]
+    bfill!(vec_inplace, 2)
+    test_array(vec_inplace, [missing, 5, 5, 5])
+
+    vec_inplace_predicate = [0.0, NaN, NaN, 5.0]
+    bfill!(vec_inplace_predicate; predicate=isnan)
+    test_array(vec_inplace_predicate, [0.0, 5.0, 5.0, 5.0])
+
+    vec_noop = [missing, 2, missing]
+    bfill!(vec_noop, 0)
+    test_array(vec_noop, [missing, 2, missing])
 end
