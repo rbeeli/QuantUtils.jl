@@ -1,7 +1,7 @@
 name = "QuantUtils"
 uuid = "9e3e799b-9571-411b-b323-83b25a8554ec"
 authors = ["Rino Beeli <40661605+rbeeli@users.noreply.github.com>"]
-version = "0.2.0"
+version = "0.2.1"
 
 [deps]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
