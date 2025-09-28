@@ -17,15 +17,15 @@ import Base: findmin, findmax
         end
     end
 
-    best_idx, best_val
+    best_val, best_idx
 end
 
 """
     findmin(collection, predicate)
 
-Return `(index, value)` only considering elements of `collection` for which
+Return `(value, index)` only considering elements of `collection` for which
 `predicate(value)` evaluates to `true`.
-Returns `(-1, nothing)` if no element satisfies the predicate.
+Returns `(nothing, -1)` if no element satisfies the predicate.
 """
 @inline function findmin(collection, predicate::F) where {F<:Function}
     _findext(collection, predicate, isless)
@@ -34,9 +34,9 @@ end
 """
     findmax(collection, predicate)
 
-Return `(index, value)` only considering elements of `collection` for which
+Return `(value, index)` only considering elements of `collection` for which
 `predicate(value)` evaluates to `true`.
-Returns `(-1, nothing)` if no element satisfies the predicate.
+Returns `(nothing, -1)` if no element satisfies the predicate.
 """
 @inline function findmax(collection, predicate::F) where {F<:Function}
     _findext(collection, predicate, (a, b) -> isless(b, a))
