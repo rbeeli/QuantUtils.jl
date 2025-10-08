@@ -35,6 +35,10 @@ ffill(vec::AbstractVector, limit::Int=typemax(Int); predicate=x -> ismissing(x) 
 ffill!(vec::AbstractVector, limit::Int=typemax(Int); predicate=x -> ismissing(x) || isnan(x))
 bfill(vec::AbstractVector, limit::Int=typemax(Int); predicate=x -> ismissing(x) || isnan(x))
 bfill!(vec::AbstractVector, limit::Int=typemax(Int); predicate=x -> ismissing(x) || isnan(x))
+fillnan(df::AbstractDataFrame, value; skip_cols=nothing)
+fillnan!(df::AbstractDataFrame, value; skip_cols=nothing)
+fillnan(vec::AbstractVector, value)
+fillnan!(vec::AbstractVector, value)
 ```
 
 ### Partitioning

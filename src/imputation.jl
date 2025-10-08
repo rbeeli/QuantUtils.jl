@@ -286,4 +286,93 @@ function bfill(
     bfill!(copy(vec), limit; predicate=predicate)
 end
 
-export ffill, ffill!, bfill, bfill!
+"""
+        fillnan!(vec::AbstractVector, value)
+
+Mutate `vec` in-place by replacing every floating-point `NaN` element with
+`value`. Elements of other types and non-`NaN` values are left untouched.
+
+Arguments
+---------
+- `vec`: Vector that will be modified in-place.
+- `value`: Replacement value assigned wherever a `NaN` is found.
+
+Returns
+-------
+- The mutated `vec`, so the call can be chained.
+"""
+function fillnan!(vec::AbstractVector, value)
+    @inbounds for idx in eachindex(vec)
+        val = vec[idx]
+        (val isa AbstractFloat && isnan(val)) && (vec[idx] = value)
+    end
+    vec
+end
+
+"""
+        fillnan(vec::AbstractVector, value)
+
+Return a copy of `vec` in which every floating-point `NaN` element is replaced
+with `value`. The original vector is left untouched.
+
+Arguments
+---------
+- `vec`: Vector to copy before replacement.
+- `value`: Replacement value assigned wherever a `NaN` is found.
+
+Returns
+-------
+- A new vector containing the updated values.
+"""
+function fillnan(vec::AbstractVector, value)
+    fillnan!(copy(vec), value)
+end
+
+"""
+        fillnan!(df::AbstractDataFrame, value; skip_cols=nothing)
+
+Mutate `df` in-place by replacing every floating-point `NaN` with `value`.
+Columns listed in `skip_cols` are left untouched.
+
+Arguments
+---------
+- `df`: Data frame whose columns will be modified in-place.
+- `value`: Replacement value assigned wherever a `NaN` is found.
+- `skip_cols`: Optional collection of column identifiers that should be skipped
+    entirely.
+
+Returns
+-------
+- The modified `df`, to allow call chaining.
+"""
+function fillnan!(df::AbstractDataFrame, value; skip_cols=nothing)
+    skip_set = isnothing(skip_cols) ? nothing : Set(skip_cols)
+    for col in names(df)
+        skip_set !== nothing && (col in skip_set) && continue
+        fillnan!(df[!, col], value)
+    end
+    df
+end
+
+"""
+        fillnan(df::AbstractDataFrame, value; skip_cols=nothing)
+
+Return a new data frame in which every floating-point `NaN` is replaced with
+`value`. Columns in `skip_cols` remain unchanged.
+
+Arguments
+---------
+- `df`: Data frame to copy before replacement.
+- `value`: Replacement value assigned wherever a `NaN` is found.
+- `skip_cols`: Optional collection of column identifiers that should be skipped
+    entirely.
+
+Returns
+-------
+- A new `DataFrame` with the requested replacements applied.
+"""
+function fillnan(df::AbstractDataFrame, value; skip_cols=nothing)
+    fillnan!(copy(df), value; skip_cols=skip_cols)
+end
+
+export ffill, ffill!, bfill, bfill!, fillnan, fillnan!

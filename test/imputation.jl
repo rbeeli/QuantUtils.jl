@@ -147,3 +147,42 @@ end
     bfill!(vec_noop, 0)
     test_array(vec_noop, [missing, 2, missing])
 end
+
+@testitem "fillnan vector" setup = [SharedImputation] begin
+    using Test
+    using QuantUtils: fillnan, fillnan!
+
+    vec = [1.0, NaN, 3.0]
+    test_array(fillnan(vec, 0.0), [1.0, 0.0, 3.0])
+    test_array(vec, [1.0, NaN, 3.0])
+
+    vec_inplace = [NaN, 2.0, NaN]
+    fillnan!(vec_inplace, -1.0)
+    test_array(vec_inplace, [-1.0, 2.0, -1.0])
+
+    vec_with_missing = [missing, 5.0]
+    fillnan!(vec_with_missing, 10.0)
+    test_array(vec_with_missing, [missing, 5.0])
+end
+
+@testitem "fillnan dataframe" setup = [SharedImputation] begin
+    using Test
+    using DataFrames
+    using QuantUtils: fillnan, fillnan!
+
+    df = DataFrame(; A=[1.0, NaN, 3.0], B=["a", "b", "c"])
+    df_filled = fillnan(df, 0.0)
+    test_array(df_filled.A, [1.0, 0.0, 3.0])
+    @test df_filled.B == df.B
+    test_array(df.A, [1.0, NaN, 3.0])
+
+    df_inplace = DataFrame(; A=[NaN, 2.0], B=[NaN, 4.0])
+    fillnan!(df_inplace, 7.0; skip_cols=["B"])
+    test_array(df_inplace.A, [7.0, 2.0])
+    test_array(df_inplace.B, [NaN, 4.0])
+
+    df_missing = DataFrame(; A=[missing, 1.0], B=[NaN, 3.0])
+    fillnan!(df_missing, 9.0)
+    test_array(df_missing.A, [missing, 1.0])
+    test_array(df_missing.B, [9.0, 3.0])
+end
