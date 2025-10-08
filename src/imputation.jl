@@ -375,4 +375,64 @@ function fillnan(df::AbstractDataFrame, value; skip_cols=nothing)
     fillnan!(copy(df), value; skip_cols=skip_cols)
 end
 
-export ffill, ffill!, bfill, bfill!, fillnan, fillnan!
+"""
+        fillnonfinite!(vec::AbstractVector, value)
+
+Mutate `vec` in-place by replacing every non-finite floating-point element
+(`NaN`, `Inf`, or `-Inf`) with `value`. Other values remain unchanged.
+"""
+function fillnonfinite!(
+    vec::AbstractVector,
+    value,
+)
+    @inbounds for idx in eachindex(vec)
+        val = vec[idx]
+        (val isa AbstractFloat && !isfinite(val)) && (vec[idx] = value)
+    end
+    vec
+end
+
+"""
+        fillnonfinite(vec::AbstractVector, value)
+
+Return a copy of `vec` in which every non-finite floating-point element is
+replaced with `value`. The original vector is left untouched.
+"""
+function fillnonfinite(vec::AbstractVector, value)
+    fillnonfinite!(copy(vec), value)
+end
+
+"""
+        fillnonfinite!(df::AbstractDataFrame, value; skip_cols=nothing)
+
+Mutate `df` in-place by replacing every non-finite floating-point value with
+`value`. Columns listed in `skip_cols` are left untouched.
+"""
+function fillnonfinite!(
+    df::AbstractDataFrame,
+    value;
+    skip_cols=nothing,
+)
+    skip_set = isnothing(skip_cols) ? nothing : Set(skip_cols)
+    for col in names(df)
+        skip_set !== nothing && (col in skip_set) && continue
+        fillnonfinite!(df[!, col], value)
+    end
+    df
+end
+
+"""
+        fillnonfinite(df::AbstractDataFrame, value; skip_cols=nothing)
+
+Return a new data frame in which every non-finite floating-point value is
+replaced with `value`. Columns in `skip_cols` remain unchanged.
+"""
+function fillnonfinite(
+    df::AbstractDataFrame,
+    value;
+    skip_cols=nothing,
+)
+    fillnonfinite!(copy(df), value; skip_cols=skip_cols)
+end
+
+export ffill, ffill!, bfill, bfill!, fillnan, fillnan!, fillnonfinite, fillnonfinite!

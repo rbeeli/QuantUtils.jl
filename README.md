@@ -39,6 +39,10 @@ fillnan(df::AbstractDataFrame, value; skip_cols=nothing)
 fillnan!(df::AbstractDataFrame, value; skip_cols=nothing)
 fillnan(vec::AbstractVector, value)
 fillnan!(vec::AbstractVector, value)
+fillnonfinite(df::AbstractDataFrame, value; skip_cols=nothing)
+fillnonfinite!(df::AbstractDataFrame, value; skip_cols=nothing)
+fillnonfinite(vec::AbstractVector, value)
+fillnonfinite!(vec::AbstractVector, value)
 ```
 
 ### Partitioning

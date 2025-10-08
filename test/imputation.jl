@@ -186,3 +186,42 @@ end
     test_array(df_missing.A, [missing, 1.0])
     test_array(df_missing.B, [9.0, 3.0])
 end
+
+@testitem "fillnonfinite vector" setup = [SharedImputation] begin
+    using Test
+    using QuantUtils: fillnonfinite, fillnonfinite!
+
+    vec = [1.0, Inf, -Inf, NaN]
+    test_array(fillnonfinite(vec, 0.0), [1.0, 0.0, 0.0, 0.0])
+    test_array(vec, [1.0, Inf, -Inf, NaN])
+
+    vec_inplace = [Inf, -Inf, 3.0]
+    fillnonfinite!(vec_inplace, 5.0)
+    test_array(vec_inplace, [5.0, 5.0, 3.0])
+
+    vec_with_missing = [missing, 2.0, -Inf]
+    fillnonfinite!(vec_with_missing, 10.0)
+    test_array(vec_with_missing, [missing, 2.0, 10.0])
+end
+
+@testitem "fillnonfinite dataframe" setup = [SharedImputation] begin
+    using Test
+    using DataFrames
+    using QuantUtils: fillnonfinite, fillnonfinite!
+
+    df = DataFrame(; A=[1.0, Inf, -Inf, NaN], B=["a", "b", "c", "d"])
+    df_filled = fillnonfinite(df, 0.0)
+    test_array(df_filled.A, [1.0, 0.0, 0.0, 0.0])
+    @test df_filled.B == df.B
+    test_array(df.A, [1.0, Inf, -Inf, NaN])
+
+    df_inplace = DataFrame(; A=[Inf, 2.0], B=[-Inf, 4.0])
+    fillnonfinite!(df_inplace, 7.0; skip_cols=["B"])
+    test_array(df_inplace.A, [7.0, 2.0])
+    test_array(df_inplace.B, [-Inf, 4.0])
+
+    df_mixed = DataFrame(; A=[missing, Inf], B=[NaN, 3.0])
+    fillnonfinite!(df_mixed, 9.0)
+    test_array(df_mixed.A, [missing, 9.0])
+    test_array(df_mixed.B, [9.0, 3.0])
+end
