@@ -6,7 +6,7 @@ Edit `series` in-place by displacing every element by `shift` positions.
 - `shift > 0` -> data move **forward** (toward larger indices)
 - `shift < 0` -> data move **backward** (toward smaller indices)
 
-Positions that lose their source value are overwritten with `fill_value`.
+The resulting gap on either end is filled with `fill_value` value.
 
 Returns the mutated `series` to support call chaining.
 """
